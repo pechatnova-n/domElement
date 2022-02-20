@@ -1,41 +1,62 @@
 'use strict';
+let elem;
 
-function DomElement (selector, height, width, bg, fontSize) {
+function DomElement (selector, height, width, bg, fontSize, position, left, top) {
     this.selector = selector;
     this.height = height;
     this.width = width;
     this.bg = bg;
     this.fontSize = fontSize;
+    this.position = position;
+    this.left = left;
+    this.top = top;
     this.createElement = function () {
+        if (element.selector.trim()[0] === ".") {
+            elem = document.createElement('div');
+            elem.classList.add(`${selector.slice(1)}`);
+        } else if (element.selector.trim()[0] === "#") {
+            elem = document.createElement('p');
+            elem.setAttribute("id", `${selector.slice(1)}`);
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (this.selector.trim()[0] === ".") {
-                let div = document.createElement('div');
-                div.classList.add(`${selector.slice(1)}`);
-                document.body.append(div);
-                div.innerText = "Здесь создан элемент div";
-                div.style.cssText=`height: ${height  + 'px'};
+        document.body.append(elem);
+        elem.innerText = ""
+        elem.style.cssText=`height: ${height  + 'px'};
                 width: ${width  + 'px'};
                 background-color: ${bg};
-                position: absolute;
+                position: ${position};
+                top: ${top + 'px'};
+                left: ${left + 'px'};
                 font-size : ${fontSize  + 'px'}; `;
-                console.log(div)
-            } else if (this.selector.trim()[0] === "#") {
-                let paragraph = document.createElement('p');
-                paragraph.setAttribute("id", `${selector.slice(1)}`);
-                document.body.append(paragraph);
-                paragraph.innerText = "Здесь создан элемент p";
-                paragraph.style.cssText=`height: ${height + 'px'};
-                width: ${width  + 'px'};
-                background-color: ${bg};
-                position: absolute;
-                font-size : ${fontSize  + 'px'}; `;
-                console.log(paragraph);
-            }
-        });
+        return elem;
+    };
+
+
+    this.keyDown = function () {
+        switch (event.key) {
+            case "ArrowLeft":
+                elem.style.left = (+elem.style.left.slice(0, -2) + -10) + "px";
+                break;
+            case 'ArrowRight':
+                elem.style.left = (+elem.style.left.slice(0, -2) + +10) + "px";
+                break;
+            case "ArrowDown":
+                elem.style.top = (+elem.style.top.slice(0, -2) + +10) + "px";
+
+                break;
+            case "ArrowUp":
+                elem.style.top = (+elem.style.top.slice(0, -2) - +10) + "px";
+                break;
+        }
     }
 
 }
 
-let elem = new DomElement('.block', '100', '100', 'pink', '18');
-elem.createElement();
+let element = new DomElement('.block', '100', '100', 'pink', '18', 'absolute', '100', '150');
+
+document.addEventListener("DOMContentLoaded", element.createElement);
+document.addEventListener("keydown", element.keyDown);
+
+
+
+
